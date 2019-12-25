@@ -1,4 +1,4 @@
-module github.com/seacomandor/jsonrpc/v2
+module github.com/seacomandor/jsonrpc
 
 go 1.12
 
