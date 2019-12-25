@@ -151,11 +151,11 @@ type RPCClient interface {
 //   Params: []int{2}, <-- invalid since a single primitive value must be wrapped in an array
 // }
 type RPCRequest struct {
-	Method            string            `json:"method"`
-	Params            interface{}       `json:"params,omitempty"`
-	ID                int               `json:"id"`
-	JSONRPC           string            `json:"jsonrpc"`
-	AdditionalHeaders map[string]string `json:"-"`
+	Method           string      `json:"method"`
+	Params           interface{} `json:"params,omitempty"`
+	ID               int         `json:"id"`
+	JSONRPC          string      `json:"jsonrpc"`
+	AdditionalHeader http.Header `json:"-"`
 }
 
 // NewRequest returns a new RPCRequest that can be created using the same convenient parameter syntax as Call()
@@ -396,8 +396,8 @@ func (client *rpcClient) doCall(RPCRequest *RPCRequest) (*RPCResponse, error) {
 		return nil, fmt.Errorf("rpc call %v() on %v: %v", RPCRequest.Method, client.endpoint, err.Error())
 	}
 
-	for key, value := range RPCRequest.AdditionalHeaders {
-		httpRequest.Header.Set(key, value)
+	for key := range RPCRequest.AdditionalHeader {
+		httpRequest.Header.Set(key, RPCRequest.AdditionalHeader.Get(key))
 	}
 
 	httpResponse, err := client.httpClient.Do(httpRequest)
